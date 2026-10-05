@@ -2,7 +2,7 @@
 import { StatusBar } from 'expo-status-bar';
 
 // componentes visuales basicos de react
-import { StyleSheet, Text, View, TextInput, Button} from 'react-native';
+import { StyleSheet, Text, View, Button} from 'react-native';
 
 //useState guarda los datos que cambian en la pantalla
 //useaEffect ejecuta las acciones cuando se actualizan los datos
@@ -12,19 +12,31 @@ import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //importo la fila reutilizable 
-import TaskItem from './components/TaskItem';
+import TaskItem from '../../components/TaskItem';
+
+import { useRouter } from 'expo-router';
 
 export default function App() {
-
-  // task guarda el texto
-  //setTask permite cambiarlo
-  const [task, setTask] = useState('');
   
   //tasks es la lista de tareas guardadas
   const [tasks, setTasks] = useState<string[]>([]);
   
   //verifica si la lista fue guardada
   const [tasksLoaded, setTasksLoaded] = useState(false);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    async function checkLogin() {
+      const isLoggedIn = await AsyncStorage.getItem('isLoggedIn');
+
+      if (isLoggedIn !== 'true') {
+        router.replace('/');
+      }
+    }
+
+    checkLogin();
+  }, []);
   
   useEffect(() => {
     async function loadTasks() {
@@ -46,24 +58,15 @@ export default function App() {
     AsyncStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks, tasksLoaded]);
   
-  function addTask() {
-    if (task.trim() === '') return;
-    setTasks([...tasks, task.trim()]);
-    setTask('');
-  }
-  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Mi lista de tareas</Text>
       {tasks.length === 0 && <Text>Todavía no tenés tareas.</Text>}
       
-      <TextInput
-      placeholder="Escribí una tarea"
-      value={task}
-      onChangeText={setTask}
-      />  
-      
-      <Button title="Agregar tarea" onPress={addTask} />
+    <Button
+      title="Nueva tarea"
+      onPress={() => router.push('/add-task')}
+    />
 
     {tasks.map((item, index) => (
       <TaskItem
