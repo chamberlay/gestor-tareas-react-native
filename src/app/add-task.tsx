@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { requestPermissionsAsync } from 'expo-notifications/build/NotificationPermissions';
 import { scheduleNotificationAsync } from 'expo-notifications/build/scheduleNotificationAsync';
 import { SchedulableTriggerInputTypes } from 'expo-notifications/build/Notifications.types';
+import { isTaskTitleValid } from '../../taskValidation';
 
 export default function AddTaskScreen() {
   const [task, setTask] = useState('');
@@ -13,7 +14,7 @@ export default function AddTaskScreen() {
   async function saveTask() {
     const title = task.trim();
 
-    if (title === '') {
+    if (!isTaskTitleValid(task)) {
       Alert.alert('Falta el titulo', 'Escribi que tarea queres agregar.');
       return;
     }
