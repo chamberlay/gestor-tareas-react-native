@@ -8,9 +8,13 @@ type TaskItemProps = {
     latitude: number;
     longitude: number;
   };
+  contact?: {
+    id: string;
+    name: string;
+  };
 };
 
-export default function TaskItem({ title, onDelete, imageUri, location }: TaskItemProps) {
+export default function TaskItem({ title, onDelete, imageUri, location, contact }: TaskItemProps) {
   return (
     <View style={styles.taskRow}>
       <View style={styles.taskDetails}>
@@ -19,6 +23,12 @@ export default function TaskItem({ title, onDelete, imageUri, location }: TaskIt
         {location && (
           <Text style={styles.location}>
             Ubicación: {location.latitude.toFixed(5)}, {location.longitude.toFixed(5)}
+          </Text>
+        )}
+
+        {contact && (
+          <Text style={styles.contact}>
+            Contacto: {contact.name}
           </Text>
         )}
       </View>
@@ -58,5 +68,10 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 12,
     color: '#555',
+  },
+  contact: {
+  marginTop: 4,
+  fontSize: 12,
+  color: '#555',
   },
 });

@@ -10,6 +10,10 @@ export type Task = {
     latitude: number;
     longitude: number;
   };
+  contact?: {
+    id: string;
+    name: string;
+  };
 };
 
 type TaskStore = {

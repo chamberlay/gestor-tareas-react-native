@@ -8,6 +8,8 @@ import { SchedulableTriggerInputTypes } from 'expo-notifications/build/Notificat
 import { isTaskTitleValid } from '../../taskValidation';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
+import { Contact as ExpoContact } from 'expo-contacts';
+import * as ContactsLegacy from 'expo-contacts/legacy';
 
 export default function AddTaskScreen() {
   const [task, setTask] = useState('');
@@ -15,6 +17,10 @@ export default function AddTaskScreen() {
   const [location, setLocation] = useState<{
     latitude: number;
     longitude: number;
+  } | null>(null);
+  const [selectedContact, setSelectedContact] = useState<{
+    id: string;
+    name: string;
   } | null>(null);
   const router = useRouter();
   const addTask = useTaskStore((state) => state.addTask);
@@ -76,6 +82,40 @@ export default function AddTaskScreen() {
     }
   }
 
+  async function pickContact() {
+    try {
+      let permiso = await ContactsLegacy.getPermissionsAsync();
+
+      if (!permiso.granted && permiso.canAskAgain) {
+        permiso = await ContactsLegacy.requestPermissionsAsync();
+      }
+
+      if (!permiso.granted) {
+        Alert.alert(
+          'Permiso de contactos requerido',
+          permiso.canAskAgain
+            ? 'Permití el acceso a tus contactos para poder elegir uno.'
+            : 'El acceso está desactivado. Habilitalo en los Ajustes de la app.'
+        );
+        return;
+      }
+
+      const contact = await ExpoContact.presentPicker();
+
+      if (contact === null) return;
+
+      const name = await contact.getFullName();
+
+      setSelectedContact({
+        id: contact.id,
+        name: name || 'Contacto sin nombre',
+      });
+    } catch (error) {
+      const detalle = error instanceof Error ? error.message : String(error);
+      Alert.alert('Error al abrir contactos', detalle);
+    }
+  }
+
   async function saveTask() {
     const title = task.trim();
 
@@ -88,6 +128,7 @@ export default function AddTaskScreen() {
       title,
       imageUri: imageUri ?? undefined,
       location: location ?? undefined,
+      contact: selectedContact ?? undefined,
     });
 
     try {
@@ -147,6 +188,15 @@ export default function AddTaskScreen() {
         <Text>
           Coordenadas: {location.latitude.toFixed(5)}, {location.longitude.toFixed(5)}
         </Text>
+      )}
+
+      <Button
+      title={selectedContact ? 'Cambiar contacto' : 'Elegir contacto'}
+      onPress={pickContact}
+      />
+
+      {selectedContact && (
+        <Text>Contacto: {selectedContact.name}</Text>
       )}
 
       <Button title="Guardar tarea" onPress={saveTask} />
