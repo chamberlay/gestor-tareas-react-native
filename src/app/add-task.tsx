@@ -7,10 +7,15 @@ import { scheduleNotificationAsync } from 'expo-notifications/build/scheduleNoti
 import { SchedulableTriggerInputTypes } from 'expo-notifications/build/Notifications.types';
 import { isTaskTitleValid } from '../../taskValidation';
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 
 export default function AddTaskScreen() {
   const [task, setTask] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [location, setLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
   const router = useRouter();
   const addTask = useTaskStore((state) => state.addTask);
 
@@ -38,6 +43,39 @@ export default function AddTaskScreen() {
     }
   }
 
+  async function getTaskLocation() {
+    let permiso = await Location.getForegroundPermissionsAsync();
+
+    // Si todavía puede pedir permiso, mostramos el diálogo del sistema.
+    if (!permiso.granted && permiso.canAskAgain) {
+      permiso = await Location.requestForegroundPermissionsAsync();
+    }
+
+    if (!permiso.granted) {
+      Alert.alert(
+        'Permiso de ubicación',
+        permiso.canAskAgain
+          ? 'Necesitamos permiso para guardar la ubicación de la tarea.'
+          : 'El permiso está desactivado. Habilitalo en los Ajustes de la app.'
+      );
+      return;
+    }
+
+    try {
+      const posicion = await Location.getCurrentPositionAsync({});
+
+      setLocation({
+        latitude: posicion.coords.latitude,
+        longitude: posicion.coords.longitude,
+      });
+    } catch {
+      Alert.alert(
+        'Ubicación no disponible',
+        'No pudimos obtener tu ubicación. Revisá que la ubicación del teléfono esté activada e intentá de nuevo.'
+      );
+    }
+  }
+
   async function saveTask() {
     const title = task.trim();
 
@@ -46,7 +84,11 @@ export default function AddTaskScreen() {
       return;
     }
 
-    addTask({ title, imageUri: imageUri ?? undefined });
+    addTask({
+      title,
+      imageUri: imageUri ?? undefined,
+      location: location ?? undefined,
+    });
 
     try {
       const permiso = await requestPermissionsAsync();
@@ -94,6 +136,17 @@ export default function AddTaskScreen() {
           source={{ uri: imageUri }}
           style={styles.preview}
         />
+      )}
+
+      <Button
+        title={location ? 'Actualizar ubicación' : 'Agregar ubicación actual'}
+        onPress={getTaskLocation}
+      />
+
+      {location && (
+        <Text>
+          Coordenadas: {location.latitude.toFixed(5)}, {location.longitude.toFixed(5)}
+        </Text>
       )}
 
       <Button title="Guardar tarea" onPress={saveTask} />

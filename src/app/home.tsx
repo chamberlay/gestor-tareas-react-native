@@ -48,6 +48,7 @@ export default function App() {
         title={task.title}
         onDelete={() => deleteTask(task.id)}
         imageUri={task.imageUri}
+        location={task.location}
       />
     ))}
       <StatusBar style="auto" />

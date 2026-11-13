@@ -6,6 +6,10 @@ export type Task = {
   id: string;
   title: string;
   imageUri?: string;
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
 };
 
 type TaskStore = {

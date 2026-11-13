@@ -4,18 +4,30 @@ type TaskItemProps = {
   title: string;
   imageUri?: string;
   onDelete: () => void;
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
 };
 
-export default function TaskItem({ title, onDelete, imageUri }: TaskItemProps) {
+export default function TaskItem({ title, onDelete, imageUri, location }: TaskItemProps) {
   return (
     <View style={styles.taskRow}>
-      <Text>{title}</Text>
-        {imageUri && (
-          <Image
-            source={{ uri: imageUri }}
-            style={styles.taskImage}
-          />
+      <View style={styles.taskDetails}>
+        <Text>{title}</Text>
+
+        {location && (
+          <Text style={styles.location}>
+            Ubicación: {location.latitude.toFixed(5)}, {location.longitude.toFixed(5)}
+          </Text>
         )}
+      </View>
+      {imageUri && (
+        <Image
+          source={{ uri: imageUri }}
+          style={styles.taskImage}
+        />
+      )}
       <TouchableOpacity onPress={onDelete}>
         <Text>Eliminar</Text>
       </TouchableOpacity>
@@ -35,8 +47,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   taskImage: {
-  width: 50,
-  height: 50,
-  borderRadius: 8,
+    width: 50,
+    height: 50,
+    borderRadius: 8,
+  },
+  taskDetails: {
+    flex: 1,
+  },
+  location: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#555',
   },
 });
