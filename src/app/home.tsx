@@ -50,6 +50,7 @@ export default function App() {
         imageUri={task.imageUri}
         location={task.location}
         contact={task.contact}
+        calendarEventId={task.calendarEventId}
       />
     ))}
       <StatusBar style="auto" />

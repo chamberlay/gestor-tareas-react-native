@@ -14,6 +14,8 @@ export type Task = {
     id: string;
     name: string;
   };
+
+  calendarEventId?: string;
 };
 
 type TaskStore = {

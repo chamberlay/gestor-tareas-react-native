@@ -10,6 +10,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { Contact as ExpoContact } from 'expo-contacts';
 import * as ContactsLegacy from 'expo-contacts/legacy';
+import * as Calendar from 'expo-calendar/legacy';
 
 export default function AddTaskScreen() {
   const [task, setTask] = useState('');
@@ -22,6 +23,7 @@ export default function AddTaskScreen() {
     id: string;
     name: string;
   } | null>(null);
+  const [calendarEventId, setCalendarEventId] = useState<string | null>(null);
   const router = useRouter();
   const addTask = useTaskStore((state) => state.addTask);
 
@@ -116,6 +118,61 @@ export default function AddTaskScreen() {
     }
   }
 
+  async function createCalendarEvent() {
+    const title = task.trim();
+
+    if (!isTaskTitleValid(task)) {
+      Alert.alert('Falta el título', 'Escribí la tarea antes de crear el evento.');
+      return;
+    }
+
+    try {
+      let permiso = await Calendar.getCalendarPermissionsAsync();
+
+      if (!permiso.granted && permiso.canAskAgain) {
+        permiso = await Calendar.requestCalendarPermissionsAsync();
+      }
+
+      if (!permiso.granted) {
+        Alert.alert(
+          'Permiso de calendario',
+          permiso.canAskAgain
+            ? 'Permití el acceso al calendario para crear el evento.'
+            : 'El acceso está desactivado. Habilitalo en los Ajustes de la app.'
+        );
+        return;
+      }
+
+      const calendarios = await Calendar.getCalendarsAsync(
+        Calendar.EntityTypes.EVENT
+      );
+
+      const calendario =
+        calendarios.find((item) => item.allowsModifications && item.isPrimary) ??
+        calendarios.find((item) => item.allowsModifications);
+
+      if (!calendario) {
+        Alert.alert('Sin calendario disponible', 'No encontramos un calendario editable.');
+        return;
+      }
+
+      const startDate = new Date(Date.now() + 60 * 60 * 1000);
+      const endDate = new Date(startDate.getTime() + 30 * 60 * 1000);
+
+      const eventId = await Calendar.createEventAsync(calendario.id, {
+        title,
+        startDate,
+        endDate,
+      });
+
+      setCalendarEventId(eventId);
+      Alert.alert('Evento creado', 'Se agregó al calendario para dentro de una hora.');
+    } catch (error) {
+      const detalle = error instanceof Error ? error.message : String(error);
+      Alert.alert('No se pudo crear el evento', detalle);
+    }
+  }
+
   async function saveTask() {
     const title = task.trim();
 
@@ -129,6 +186,7 @@ export default function AddTaskScreen() {
       imageUri: imageUri ?? undefined,
       location: location ?? undefined,
       contact: selectedContact ?? undefined,
+      calendarEventId: calendarEventId ?? undefined,
     });
 
     try {
@@ -191,13 +249,19 @@ export default function AddTaskScreen() {
       )}
 
       <Button
-      title={selectedContact ? 'Cambiar contacto' : 'Elegir contacto'}
-      onPress={pickContact}
+        title={selectedContact ? 'Cambiar contacto' : 'Elegir contacto'}
+        onPress={pickContact}
       />
 
       {selectedContact && (
         <Text>Contacto: {selectedContact.name}</Text>
       )}
+
+      <Button
+        title={calendarEventId ? 'Evento agregado al calendario' : 'Crear evento en calendario'}
+        onPress={createCalendarEvent}
+        disabled={calendarEventId !== null}
+      />
 
       <Button title="Guardar tarea" onPress={saveTask} />
     </View>

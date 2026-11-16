@@ -12,9 +12,17 @@ type TaskItemProps = {
     id: string;
     name: string;
   };
+  calendarEventId?: string;
 };
 
-export default function TaskItem({ title, onDelete, imageUri, location, contact }: TaskItemProps) {
+export default function TaskItem({
+  title,
+  onDelete,
+  imageUri,
+  location,
+  contact,
+  calendarEventId,
+}: TaskItemProps) {
   return (
     <View style={styles.taskRow}>
       <View style={styles.taskDetails}>
@@ -30,6 +38,10 @@ export default function TaskItem({ title, onDelete, imageUri, location, contact 
           <Text style={styles.contact}>
             Contacto: {contact.name}
           </Text>
+        )}
+
+        {calendarEventId && (
+          <Text style={styles.calendarEvent}>Evento agregado al calendario</Text>
         )}
       </View>
       {imageUri && (
@@ -64,14 +76,19 @@ const styles = StyleSheet.create({
   taskDetails: {
     flex: 1,
   },
-  location: {
+    location: {
     marginTop: 4,
     fontSize: 12,
     color: '#555',
   },
-  contact: {
-  marginTop: 4,
-  fontSize: 12,
-  color: '#555',
+    contact: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#555',
+  },
+    calendarEvent: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#555',
   },
 });
