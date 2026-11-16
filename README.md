@@ -1,46 +1,66 @@
-###### ***# Gestor de tareas***
+## Gestor de tareas
 
-Trabajo práctico parcial de Aplicaciones Móviles. Aplicación desarrollada con React Native y Expo.
-
-
-###### ***## Opción elegida***
-
-Gestor de tareas.
+    Trabajo práctico parcial de Aplicaciones Móviles. Aplicación desarrollada con React Native y Expo.
 
 
-###### ***## Funcionalidades***
+## Opción elegida
+
+    Gestor de tareas.
 
 
-\- Registro e inicio de sesión local.
+## Funcionalidades
 
-\- Creación y eliminación de tareas.
+    \- Registro e inicio de sesión local.
 
-\- Almacenamiento local de usuarios y tareas mediante AsyncStorage.
+    \- Creación y eliminación de tareas.
 
-\- Recordatorio local programado al guardar una tarea.
+    \- Almacenamiento local de usuarios y tareas mediante AsyncStorage.
 
-\- Pruebas con Jest y React Native Testing Library.
+    \- Guardado de usuarios y tareas en el dispositivo.
 
+    \- Recordatorio local al crear una tarea.
 
-###### ***## Tecnologías***
+    \- Selección de una imagen de la galería y visualización junto a la tarea.
 
+    \- Obtención de la ubicación actual y asociación de sus coordenadas a una tarea.
 
-\- React Native
+    \- Selección de un contacto de la agenda y asociación a una tarea.
 
-\- Expo
+    \- Creación de un evento en el calendario del dispositivo, vinculado a una tarea.
 
-\- Expo Router
+    \- Solicitud de permisos para usar la galería, la ubicación, los contactos y el calendario. Si se rechazan, la app muestra un mensaje.
 
-\- AsyncStorage
+    \- Manejo global de las tareas con Zustand, con acciones para agregar, eliminar y actualizar.
 
-\- Expo Notifications
+    \- Pruebas automatizadas con Jest y React Native Testing Library.
 
-\- Jest y React Native Testing Library
+## Tecnologías
 
+    \- React Native
 
-###### ***## Cómo ejecutar la aplicación***
+    \- Expo
 
-Requisitos: Node.js 22.13 o superior y Expo Go compatible con el SDK 58 del proyecto.
+    \- Expo Router
+
+    \- Zustand
+
+    \- AsyncStorage
+
+    \- Expo Notifications
+
+    \- Expo Image Picker
+
+    \- Expo Location
+
+    \- Expo Contacts
+
+    \- Expo Calendar
+
+    \- Jest y React Native Testing Library
+
+## Cómo ejecutar la aplicación
+
+Requisitos: Node.js 22.13 o superior y el development build de la aplicación instalado en el teléfono.
 
 Desde PowerShell, en la carpeta del proyecto, ejecutar:
 
@@ -48,21 +68,20 @@ Desde PowerShell, en la carpeta del proyecto, ejecutar:
 
 "npx.cmd expo start"
 
-Escaneá el código QR con Expo Go para abrir la aplicación.
+Cuando aparezca el código QR, escanearlo con la aplicación Parcial Uno (development build).
 
+## Cómo ejecutar las pruebas
 
-###### ***## Ejecutar las pruebas***
-
-Desde PowerShell, ejecutar:
+Desde PowerShell, en la carpeta del proyecto, ejecutar:
 
 "npm.cmd test"
 
-
-###### ***## Video demo***
+## Video demo
 
 https://youtube.com/shorts/Kpj16NhJtDw?feature=share
 
+https://youtube.com/shorts/RtX2nKxNgSU
 
-###### ***## Repositorio***
+## Repositorio
 
 https://github.com/chamberlay/gestor-tareas-react-native.git
